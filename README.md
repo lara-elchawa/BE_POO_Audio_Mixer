@@ -1,2 +1,6 @@
-# BE_POO_Template
-Projet de base pour Ardouino
+# BE_POO_Audio_Mixer
+Lara El Chawa
+  Craig Cassar
+  Joshua Touboul-Rosette
+
+
