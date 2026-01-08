@@ -57,21 +57,89 @@ private:
     int sdaPin;
     int sclPin;
 
+    /**
+     * @brief compute the offset in x and y of a given zone
+     * @param zone TEXT_ZONE, VOLUM_ZONE or IMAGE_ZONE
+     * @param xOff (int) the x value to add to correspond in the selected zone
+     * @param yOff (int) the y value to add to correspond in the selected zone
+     */
     void getZoneOffset(LCDzone zone, int *xOff, int *yOff);
 
 public:
+    /** 
+     * @brief create the object
+     * @param sda (int) the SDA pin
+     * @param scl (int) the SCL pin
+     **/
     LcdDriver(int sda, int scl);    // construtor
 
+    /**
+     * @brief initialise the LCD
+     */
     bool begin();   // init
+    
+    /**
+     * @brief clear all the LCD display
+     */
     void clear();   // clear the screen 
+    
+    /**
+     * @brief update the LCD - MANDATORY to apply change(s)
+     */
     void update();  // print all change(s) done 
-
+    
+    /**
+     * @brief draw the given image by "bitmap" on the LCD (don't care about the LCD decomposition in 3 zones)
+     * @param x (int) the x value of the beginning of the image  
+     * @param y (int) the y value of the beginning of the image
+     * @param bitmap (const unsigned char*) the 
+     * @param w (int) the width  of the image
+     * @param h (int) the height of the image
+     */
     void drawImage(int x, int y, const unsigned char* bitmap, int w, int h);    // basic function
+    
+    /**
+     * @brief print the given text on the LCD (don't care about the LCD decomposition in 3 zones)
+     * @param x (int) the x value of the beginning of the text  
+     * @param y (int) the y value of the beginning of the text
+     * @param text (const char*) the text to print
+     */
     void printText(int x, int y, const char* text);                             // basic function
 
+    /**
+     * @brief draw the volume bar in this zone with the specified percentage
+     * @param zone TEXT_ZONE, VOLUM_ZONE or IMAGE_ZONE
+     * @param percentage (int) from 0 to 100 
+     */
     void drawVolumeBar(LCDzone zone, int percentage);                                       // print the frame for the volume bar
-    void printTextInZone(LCDzone zone, int x, int y, const char* text);                     // print text  in the textual zone  
-    void drawImageInZone(LCDzone zone, int x, int y, const unsigned char* bitmap, int width, int height);   // print image in the image   zone
+    
+    /**
+     * @brief print a given text in the image zone
+     * NB: used only for debugging, watch out to the lenght: line break in the volume bar
+     * @param zone TEXT_ZONE, VOLUM_ZONE or IMAGE_ZONE
+     * @param localX (int) start x value of the text, in the zone (don't care about the LCD decomposition in 3 zones)
+     * @param localY (int) start y value of the image, in the zone (don't care about the LCD decomposition in 3 zones)
+     * @param bitmap (const unsigned char*) an array which contains the bitmap to display (see LCD.h)
+     * @param width  (int) the width  of the bitmap to display
+     * @param height (int) the height of the bitmap to display
+     */
+    void printTextInZone(LCDzone zone, int x, int y, const char* text);                     // print text  in the textual zone 
+    
+    /**
+     * @brief draw the image send as "bitmap" in the image zone (maximum 118x23 px)
+     * @param zone TEXT_ZONE, VOLUM_ZONE or IMAGE_ZONE
+     * @param localX (int) start x value of the image, in the zone (don't care about the LCD decomposition in 3 zones)
+     * @param localY (int) start y value of the image, in the zone (don't care about the LCD decomposition in 3 zones)
+     * @param bitmap (const unsigned char*) an array which contains the bitmap to display (see LCD.h)
+     * @param width  (int) the width  of the bitmap to display
+     * @param height (int) the height of the bitmap to display
+     */
+    void drawImageInZone(LCDzone zone, int x, int y, const unsigned char* bitmap, int width, int height);
+
+    /**
+     * @brief clear the zone (text, volume or image) selected
+     * @param zone TEXT_ZONE, VOLUM_ZONE or IMAGE_ZONE
+     */
     void clearZone(LCDzone zone);   // clear only one selected zone
 };
 
