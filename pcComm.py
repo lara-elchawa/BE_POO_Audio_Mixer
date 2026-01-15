@@ -18,7 +18,7 @@ import win32api
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
-BAUDRATE = 115200
+BAUDRATE = 921600
 HANDSHAKE_SEND_CMD = "BEGIN_AUDIO_MIXER"
 HANDSHAKE_ACK_KEYWORD = "AUDIO_MIXER_STARTED"
 
@@ -302,7 +302,7 @@ class ModernMixerApp(ctk.CTk):
         if self.running and self.serial_port and self.serial_port.is_open and not self.handshake_done:
             self.send_to_esp(HANDSHAKE_SEND_CMD, log=False)
             self.log("Envoi Handshake... (En attente de l'ESP)", 'tx')
-            self.after(1000, self.handshake_loop)
+            self.after(100, self.handshake_loop)
 
     # --- PROCESSING ---
     def process_queue(self):
@@ -338,13 +338,13 @@ class ModernMixerApp(ctk.CTk):
         old_app = self.audio.get_current_app_name()
 
         # 1. Traitement des commandes
-        if cmd == "GET_LIST" or cmd == "GET_SOFTWARE_LIST":
+        if cmd == "GET_LIST" or cmd == "CMD_GET_SOFTWARE_LIST":
             resp = self.audio.get_software_list_string()
             self.send_to_esp(resp)
             self.log(f"Liste envoyée", 'sys')
             need_full_refresh = True
             success = True
-            ack_name = "GET_SOFTWARE_LIST"
+            ack_name = "CMD_GET_SOFTWARE_LIST"
 
         elif cmd == "NEXT_SOFTWARE":
             self.audio.next_software()

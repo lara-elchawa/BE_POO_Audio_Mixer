@@ -8,15 +8,13 @@ AS5600POTAR::AS5600POTAR(uint8_t address, TwoWire *wire) : AS5600(wire) {
 //initialisation du potentiomètre
 int AS5600POTAR::beginPOTAR(void) {
     if (!AS5600::begin()) {
-        _error = AS5600_OK; // Code d'erreur pour échec de l'initialisation
-        return _error; // Retourne -1 en cas d'erreur d'initialisation
+        return -1; // Retourne -1 en cas d'erreur d'initialisation
     }
     else{
 
     setRotationRangeRevolutions(3.0f); // 
     setHysteresis(AS5600_HYST_LSB2); // Évite que la valeur saute entre deux points
-    setSlowFilter(AS5600_SLOW_FILT_4X); // Lisse la lecture
-
+    setSlowFilter(AS5600_SLOW_FILT_2X); // Lisse la lecture
     // Calibre la position actuelle comme 0%
     calibrateZero();
 
@@ -117,3 +115,22 @@ void AS5600POTAR::calibrateZero(void)
 }
 
 
+bool AS5600POTAR::VolumeUpdated(void) {
+    _currentVolume = getValue(); // Appelle ta fonction qui retourne 0-100
+    
+    // On vérifie s'il y a une différence
+    if (_currentVolume != _previousVolume) {
+        _previousVolume = _currentVolume;
+        return true;
+
+    }
+    return false;
+}
+
+bool AS5600POTAR::buttonUpdated(void){//Attention uniquement sur les fronts montants!
+    _currentButtonState = isPressed();
+    if((_currentButtonState != _previousButtonState) && (_previousButtonState = 0)){
+        return true;
+    }
+    return false;
+}

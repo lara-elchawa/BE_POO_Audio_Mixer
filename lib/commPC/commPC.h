@@ -9,17 +9,17 @@
 
 
 #define MAX_SOFTWARES 10 // nombre maximum de logiciels pouvant être gérés par l'AudioMixer
-// Commandes à envoyer au PC pour controler les audios des logiciels : 
 #define CMD_VOLUME_UP "VOLUME_UP"
 #define CMD_VOLUME_DOWN "VOLUME_DOWN"
 #define CMD_MUTE "MUTE"
 #define CMD_NEXT_TRACK "NEXT_TRACK"
 #define CMD_PREV_TRACK "PREV_TRACK"
+#define CMD_PAUSE_PLAY "PAUSE_PLAY"
 #define CMD_NEXT_SOFTWARE "NEXT_SOFTWARE"
-#define CMD_SET_VOLUME "SET_VOLUME" // suivi du niveau de volume (0-100) qui sera récupéré par l'encoder
-#define GET_SOFTWARE_LIST "GET_SOFTWARE_LIST"
-#define PAUSE_PLAY "PAUSE_PLAY"
-#define NVIC_SYSTEM_RESET "NVIC_SYSTEM_RESET" // commande spéciale pour redémarrer l'ESP via le PC
+#define CMD_GET_SOFTWARE_LIST "CMD_GET_SOFTWARE_LIST" 
+#define CMD_SET_VOLUME "SET_VOLUME"
+#define CMD_NVIC_SYSTEM_RESET "NVIC_SYSTEM_RESET"
+
 class commPC {
 public:
 
@@ -29,6 +29,9 @@ public:
      * @param serial Référence à l'objet HardwareSerial pour la communication série
      */
     commPC(HardwareSerial& serial); 
+
+
+    virtual ~commPC() {}// Il faut un destructeur virtuel à cause de l'héritage!!!
 
     /**
      * @brief Initialisation de la communication série avec le PC
@@ -64,8 +67,8 @@ public:
     int _numSoftwares;         // Nombre de logiciels dans la liste
     uint8_t _softwareColorRGB[3]; // Tableau pour stocker les valeurs RGB du logiciel sélectionné
 
-private:
-    HardwareSerial& _serial;
+protected:
+    HardwareSerial& _serial;//en protected à cause de l'héritage
     
     
 

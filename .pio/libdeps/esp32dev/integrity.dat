@@ -1,2 +1,4 @@
 adafruit/Adafruit SSD1306 @ ^2.5.9
 adafruit/Adafruit GFX Library @ ^1.11.9
+robtillaart/AS5600@^0.6.6
+fastled/FastLED@^3.10.3

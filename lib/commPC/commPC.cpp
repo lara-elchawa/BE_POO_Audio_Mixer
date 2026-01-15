@@ -3,12 +3,13 @@
 commPC::commPC(HardwareSerial &serial) : _serial(serial) {}
 
 bool commPC::init() {
-  _serial.begin(115200);
+  _serial.setTimeout(5000); // Très important pour ne pas bloquer readStringUntil
   delay(500);
 
   sendMessageDebug("Attente du signal PC...");
 
   unsigned long startTime = millis();
+  
   const unsigned long timeout = 5000; // 5 secondes
 
   // Timeout
@@ -27,7 +28,6 @@ bool commPC::init() {
         //  continue de chercher
       }
     }
-    delay(10); // Laisse souffler le processeur
   }
 
   // Si on arrive ici, c'est que les 5 secondes sont passées sans succès
@@ -50,7 +50,7 @@ bool commPC::getSoftwaresList(
   bool colorReceived = false;
 
   unsigned long startTime = millis();
-  const unsigned long timeout = 3000;
+  const unsigned long timeout = 1000;
 
   while (millis() - startTime < timeout) {
     if (listParsed && ackReceived && colorReceived) {
@@ -150,7 +150,7 @@ void commPC::sendCommandToPC(String command) {
 
     // Initialisation du timeout
     unsigned long startTime = millis();
-    const unsigned long timeout = 1000; // 1 seconde max d'attente
+    const unsigned long timeout = 100; // 1 seconde max d'attente
 
     bool ackReceived = false; // Pour vérifier la réception de l'ACK
     bool needsColor =
@@ -176,13 +176,12 @@ void commPC::sendCommandToPC(String command) {
         // INTERCEPTION PRIORITAIRE DU RESET
         if (response == "NVIC_SYSTEM_RESET") {
           sendMessageDebug("REDÉMARRAGE MATÉRIEL EN COURS...");
-          delay(500);         // Laisse le temps au message debug de partir
           ESP.restart(); // Redémarrage matériel
         }
 
         if (response == (command + "_ACK")) { // ACK RECU POUR LA COMMANDE
           ackReceived = true;
-          sendMessageDebug("ACK recu pour " + command);
+          //sendMessageDebug("ACK recu pour " + command);
         }
 
         // Cas B : La Couleur (Utilisation de la variable membre
@@ -212,6 +211,8 @@ void commPC::sendCommandToPC(String command) {
           sendMessageDebug("Couleur du logiciel mise a jour.");
         }
       }
+
+      delay(1);
     }
 
     if (!ackReceived) {

@@ -78,14 +78,31 @@ int setMagFieldHighThreshold(float threshold); //Définition du seuil haut de d�
 int setMagFieldLowThreshold(float threshold); //Définition du seuil bas de déclenchement du bouton
 
 
-private :
+/**
+ * @brief Nous informe si la valeur du volume a été mise à jour depuis la dernière lecture.
+ * 
+ * @param newVal Référence pour stocker la nouvelle valeur du volume (0-100)
+ * @return true si la valeur a été mise à jour
+ * @return false sinon
+ */
+bool VolumeUpdated(void);
+
+bool buttonUpdated(void);
+
         uint8_t _address; //Adresse I2C du capteur par défaut : 0x36
         float _magFieldHighThreshold = 2000; //Seuil haut de déclenchement du bouton
         float _magFieldLowThreshold = 1000; //Seuil bas de déclenchement du bouton
-
         // Calibration de la plage du potentiomètre (défaut = 360° pour 0->100%)
         float _rotationRangeDegrees = 360.0f;
         int32_t _basePosition = 0; // position de référence (raw cumulative) pour 0%
+        bool _previousButtonState = 0; // État précédent du bouton poussoir magnétique
+        bool _currentButtonState = 0; // État actuel du bouton
+        uint8_t _previousVolume = 0; // État actuel du bouton poussoir magnétique
+        uint8_t _currentVolume = 0; // Valeur actuelle du volume (0-100)
+        
+private :
+
+
 
 
 };

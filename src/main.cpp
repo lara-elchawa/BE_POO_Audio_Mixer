@@ -1,81 +1,78 @@
+#include "realTimeCommPC.h"
 #include <Arduino.h>
-#include "commPC.h"
+#include "AS5600POTAR.h"
 
-commPC PCLink(Serial); 
+realTimeCommPC audioMixer(Serial);
+AS5600POTAR magPotar(0x36, &Wire);
+
+/**
+ * @brief Tâche Gestion Hardware (capteurs, boutons, encodeur magnétique)
+ * @param pvParameters Paramètres de la tâche (non utilisés)
+ */
+void taskHardware(void *pvParameters) {
+
+  ControlMsg msg; //Structure pour recevoir les messages du PC.
+
+  for (;;) {
+    
+    // Si la valeur du potentiomètre a changé, on envoie la nouvelle valeur de volume au PC
+    if(magPotar.VolumeUpdated()) {
+        audioMixer.sendEvent(SET_VOLUME, magPotar._currentVolume);
+    }
+    if(magPotar.buttonUpdated()){
+        audioMixer.sendEvent(NEXT_SOFTWARE,magPotar._currentButtonState);
+    }
+    
+    // Si la valeur du bouton a changé, on envoie l'événement au PC pour lui dire de changer le logiciel : 
+    
+    if (audioMixer.checkUpdate(&msg)) {
+      // *! FAIRE LE CODE DE GESTION DES COMMANDES REÇUES ICI
+    
+
+    }
+    vTaskDelay(pdMS_TO_TICKS(100));
+  }
+}
+
 
 void setup() {
-    Serial.begin(115200);
-    
-    while(!PCLink.init()){
-        delay(10);
-    }
+  Serial.begin(921600);
+  Wire.begin(); 
+  Wire.setClock(400000);
 
-    PCLink.sendMessageDebug("Connexion OK. Demande de la liste...");
-    if(PCLink.getSoftwaresList()){
-        PCLink.sendMessageDebug("Liste reçue !");
-        
-        for(int i=0; i<PCLink._numSoftwares; i++){
-            PCLink.sendMessageDebug("App " + String(i) + ": " + PCLink._ListSoftwares[i]);
-        }
-    } else {
-        PCLink.sendMessageDebug("Erreur réception liste.");
-    }
+  delay(1500);
+  Serial.println("DEBUG: [SYSTEM] Démarrage matériel...");
 
-    PCLink.sendMessageDebug("--- DEBUT DU TEST AUTOMATIQUE DANS 3 SECONDES ---");
-    delay(3000);
+  
+  if (!audioMixer.begin()) {
+    Serial.println("DEBUG: [ERREUR] Initialisation des Queues échouée.");
+    while (1)
+      ;
+  }
+
+  if (!audioMixer.init()) { // *! C'est ici qu'il y a le handshake avec le PC
+    Serial.println("DEBUG: [ERREUR] Handshake PC introuvable. Reset...");
+    ESP.restart();
+  }
+
+  audioMixer.sendMessageDebug("Connexion PC validée.");
+  audioMixer.sendEvent(GET_SOFTWARE_LIST);
+  // Initialisation du potentiomètre rotatif AS5600POTAR
+    if (magPotar.beginPOTAR()!= AS5600_OK) {
+        audioMixer.sendMessageDebug("ERREUR: Initialisation AS5600POTAR échouée.");
+        while (1)
+        ;
+    }
+    audioMixer.sendMessageDebug("AS5600POTAR initialisé avec succès.");
+
+
+      xTaskCreatePinnedToCore(taskHardware, "TaskHW", 8192, NULL, 1, NULL, 1);
+  audioMixer.sendMessageDebug("Tâche Hardware lancée.");
+  audioMixer.sendMessageDebug("Setup terminé, audioMixer Fonctionnel.");
+
 }
 
 void loop() {
-
-
-    PCLink.sendMessageDebug("TEST: Changement de logiciel (Next)");
-    PCLink.sendCommandToPC(CMD_NEXT_SOFTWARE);
-    delay(1500);
-
-    PCLink.sendMessageDebug("TEST: Changement de logiciel (Next)");
-    PCLink.sendCommandToPC(CMD_NEXT_SOFTWARE);
-    delay(1500);
-
-
-
-    PCLink.sendMessageDebug("TEST: Volume Down (x5)");
-    for(int i=0; i<5; i++) {
-        PCLink.sendCommandToPC(CMD_VOLUME_DOWN);
-        delay(200); 
-    }
-    delay(1000);
-
-    PCLink.sendMessageDebug("TEST: Volume Up (x5)");
-    for(int i=0; i<5; i++) {
-        PCLink.sendCommandToPC(CMD_VOLUME_UP);
-        delay(200);
-    }
-    delay(1500);
-
-    PCLink.sendMessageDebug("TEST: Mute (ON)");
-    PCLink.sendCommandToPC(CMD_MUTE);
-    delay(2000); 
-
-    PCLink.sendMessageDebug("TEST: Mute (OFF)");
-    PCLink.sendCommandToPC(CMD_MUTE);
-    delay(1500);
-
-    PCLink.sendMessageDebug("TEST: Set Volume 20%");
-    PCLink.sendCommandToPC(String(CMD_SET_VOLUME) + ":20");
-    delay(2000);
-
-    PCLink.sendMessageDebug("TEST: Set Volume 80%");
-    PCLink.sendCommandToPC(String(CMD_SET_VOLUME) + ":80");
-    delay(2000);
-
-    PCLink.sendMessageDebug("TEST: Play/Pause");
-    PCLink.sendCommandToPC(PAUSE_PLAY); 
-    delay(2000);    
-
-    PCLink.sendMessageDebug("TEST: Mise à jour de la liste des logiciels");
-    PCLink.getSoftwaresList();
-    
-    
-    PCLink.sendMessageDebug("--- FIN DU CYCLE DE TEST (RESTART DANS 5s) ---");
-    delay(5000);
+  // On tue la boucle loop pour libérer des ressources
+  vTaskDelete(NULL);
 }
