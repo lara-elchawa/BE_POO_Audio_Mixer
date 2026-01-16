@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "LCD.h"  
+#include "LCD.h"
 
 // Configuration of I2C pins:
 #define I2C_SDA 21
@@ -38,15 +38,15 @@ void loop() {
   // test 3: 3 zones (improved)
   myLcd.clear();
 
-  for (int i=100 ; i>=0 ; i=i-20)  {
+  for (int i=90 ; i>=10 ; i=i-10)  {
     String msgToPrint = String(i) + "% - Spotify"; 
 
     myLcd.clear();
     myLcd.printTextInZone(TEXT_ZONE, 10, 0, msgToPrint.c_str());  // text zone
     myLcd.drawVolumeBar(VOLUM_ZONE, i);                           // volume bar zone
-    myLcd.drawImageInZone(IMAGE_ZONE, 0, 0, SpotifyIcon, 8, 8);   // image zone
+    myLcd.drawImageInZone(IMAGE_ZONE, 0, 0, SpotifyIcon, 118, 23);   // image zone
   
-    myLcd.update();
-    delay(100);
+    myLcd.update(); // MANDATORY !!!
+    delay(300);
   }
 }
