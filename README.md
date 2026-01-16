@@ -1,3 +1,7 @@
+
+PC - ESP:
+
+
 Cette partie permet de contrôler le volume des applications Windows individuellement (Spotify, Chrome, Discord...) en utilisant un **ESP32** à l'aide d'un potentiomètre physique infini (**AS5600**). 
 
 Un ruban LED **WS2811B** intégré change de couleur automatiquement pour indiquer quel logiciel est en cours de contrôle (Vert pour Spotify, Jaune pour Chrome, etc.).
