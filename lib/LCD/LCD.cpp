@@ -3,12 +3,12 @@
 
 LcdDriver::LcdDriver(int sda, int scl) 
     : display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET) {
-    sdaPin = sda;
-    sclPin = scl;
+    _sdaPin = sda;
+    _sclPin = scl;
 }
 
 bool LcdDriver::begin() {
-    Wire.begin(sdaPin, sclPin);
+    Wire.begin(_sdaPin, _sclPin);
 
     if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) 
         return false;

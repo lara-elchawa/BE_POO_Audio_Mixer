@@ -59,32 +59,69 @@ class WindowsAudioController:
         return "Aucun"
 
     def get_dominant_color(self):
-        """Extrait la couleur de l'icône de l'app active"""
+        """
+        Extrait la couleur dominante de l'icône.
+        Version ultra-compatible utilisant win32ui pour extraire les bits.
+        """
         if not self.sessions or self.current_index >= len(self.sessions):
             return (255, 255, 255)
+
         try:
             exe_path = self.sessions[self.current_index].Process.exe()
-            ico_x = win32gui.GetSystemMetrics(win32con.SM_CXICON)
-            ico_y = win32gui.GetSystemMetrics(win32con.SM_CYICON)
             large, small = win32gui.ExtractIconEx(exe_path, 0)
-            if not large: return (100, 100, 100)
-            hdc = win32ui.CreateDCFromHandle(win32gui.GetDC(0))
-            hbmp = win32ui.CreateBitmap()
-            hbmp.CreateCompatibleBitmap(hdc, ico_x, ico_y)
-            hdc_mem = hdc.CreateCompatibleDC()
-            hdc_mem.SelectObject(hbmp)
-            win32gui.DrawIconEx(hdc_mem.GetSafeHdc(), 0, 0, large[0], ico_x, ico_y, 0, None, win32con.DI_NORMAL)
-            bmpinfo = hbmp.GetInfo()
-            bmpstr = hbmp.GetBitmapBits(True)
-            img = Image.frombuffer('RGBA', (bmpinfo['bmWidth'], bmpinfo['bmHeight']), bmpstr, 'raw', 'BGRA', 0, 1)
+            if not large:
+                return (150, 150, 150)
+
+            # 1. Dimensions
+            ico_x = win32api.GetSystemMetrics(win32con.SM_CXICON)
+            ico_y = win32api.GetSystemMetrics(win32con.SM_CYICON)
+
+            # 2. Création des contextes avec win32ui (plus robuste pour les bits)
+            hdc_screen = win32gui.GetDC(0)
+            ui_hdc_screen = win32ui.CreateDCFromHandle(hdc_screen)
+            ui_hdc_mem = ui_hdc_screen.CreateCompatibleDC()
+            
+            ui_hbmp = win32ui.CreateBitmap()
+            ui_hbmp.CreateCompatibleBitmap(ui_hdc_screen, ico_x, ico_y)
+            ui_hdc_mem.SelectObject(ui_hbmp)
+
+            # 3. Dessiner l'icône
+            win32gui.DrawIconEx(ui_hdc_mem.GetSafeHdc(), 0, 0, large[0], ico_x, ico_y, 0, None, win32con.DI_NORMAL)
+
+            # 4. Extraction des bits (Correction : on utilise la méthode de l'objet ui_hbmp)
+            bmp_str = ui_hbmp.GetBitmapBits(True)
+            img = Image.frombuffer('RGBA', (ico_x, ico_y), bmp_str, 'raw', 'BGRA', 0, 1)
+
+            # 5. Nettoyage
             win32gui.DestroyIcon(large[0])
             if small: win32gui.DestroyIcon(small[0])
-            img = img.convert("RGB")
-            img = img.resize((1, 1), resample=Image.Resampling.BILINEAR)
-            return img.getpixel((0, 0))
-        except:
-            return (255, 255, 255)
+            ui_hdc_mem.DeleteDC()
+            ui_hdc_screen.DeleteDC()
+            win32gui.ReleaseDC(0, hdc_screen)
 
+            # 6. Analyse des couleurs
+            img = img.convert("RGBA").resize((32, 32))
+            pixels = img.getdata()
+            
+            colors = []
+            for r, g, b, a in pixels:
+                if a > 150: # On ignore la transparence
+                    if not (r > 245 and g > 245 and b > 245): # On ignore le blanc pur
+                        colors.append((r, g, b))
+
+            if not colors:
+                return (200, 200, 200)
+
+            # Calcul de la couleur la plus fréquente
+            counts = {}
+            for c in colors:
+                counts[c] = counts.get(c, 0) + 1
+            
+            return max(counts, key=counts.get)
+
+        except Exception as e:
+            print(f"DEBUG COULEUR: Erreur sur {self.app_names[self.current_index]} -> {e}")
+            return (255, 255, 255)
     def get_software_list_string(self):
         self.update_sessions()
         return ",".join(self.app_names)

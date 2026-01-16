@@ -10,6 +10,7 @@
             "includePath": [
                 "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/include",
                 "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/src",
+                "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/realTimeCommPC",
                 "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/commPC",
                 "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/AS5600POTAR",
                 "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/.pio/libdeps/esp32dev/AS5600",
@@ -214,7 +215,6 @@
                 "C:/Users/jatou/.platformio/packages/framework-arduinoespressif32/variants/esp32",
                 "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/LCD",
                 "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/RGB_LED",
-                "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/realTimeCommPC",
                 "C:/Users/jatou/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
                 "C:/Users/jatou/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src",
                 "C:/Users/jatou/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src",
@@ -250,6 +250,7 @@
                 "path": [
                     "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/include",
                     "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/src",
+                    "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/realTimeCommPC",
                     "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/commPC",
                     "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/AS5600POTAR",
                     "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/.pio/libdeps/esp32dev/AS5600",
@@ -454,7 +455,6 @@
                     "C:/Users/jatou/.platformio/packages/framework-arduinoespressif32/variants/esp32",
                     "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/LCD",
                     "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/RGB_LED",
-                    "C:/Users/jatou/Documents/Alternance/INSA/4 AE FISA/Cpp/BECPP/bricolage/AudioMixer/lib/realTimeCommPC",
                     "C:/Users/jatou/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
                     "C:/Users/jatou/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src",
                     "C:/Users/jatou/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src",

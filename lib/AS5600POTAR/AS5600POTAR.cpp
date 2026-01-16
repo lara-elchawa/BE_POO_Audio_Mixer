@@ -12,7 +12,7 @@ int AS5600POTAR::beginPOTAR(void) {
     }
     else{
 
-    setRotationRangeRevolutions(3.0f); // 
+    setRotationRangeRevolutions(6.0f); // 
     setHysteresis(AS5600_HYST_LSB2); // Évite que la valeur saute entre deux points
     setSlowFilter(AS5600_SLOW_FILT_2X); // Lisse la lecture
     // Calibre la position actuelle comme 0%
@@ -83,7 +83,6 @@ bool AS5600POTAR::isPressed(void) {
         }
     }
 
-
     return false; // État inchangé
 }
 
@@ -127,10 +126,14 @@ bool AS5600POTAR::VolumeUpdated(void) {
     return false;
 }
 
-bool AS5600POTAR::buttonUpdated(void){//Attention uniquement sur les fronts montants!
-    _currentButtonState = isPressed();
-    if((_currentButtonState != _previousButtonState) && (_previousButtonState = 0)){
+bool AS5600POTAR::buttonUpdated(void) {
+    _currentButtonState = isPressed(); 
+
+    if (_currentButtonState == 1 && _previousButtonState == 0) {
+        _previousButtonState = _currentButtonState;
         return true;
     }
+    _previousButtonState = _currentButtonState;
+
     return false;
 }

@@ -54,8 +54,8 @@ enum LCDzone {      //           ( X  | Y )
 class LcdDriver {
 private:
     Adafruit_SSD1306 display;
-    int sdaPin;
-    int sclPin;
+    int _sdaPin;
+    int _sclPin;
 
     /**
      * @brief compute the offset in x and y of a given zone
